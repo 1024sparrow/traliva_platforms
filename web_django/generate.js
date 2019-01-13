@@ -21,5 +21,13 @@ var api = fs.readFileSync(path.join(projectPath, 'api'), 'utf8');
 api = eval('[' + api + ']');
 console.log('*****************');
 
-//var index_html = fs.readFileSync('t/api_native.h', 'utf8');
-//var index_html = fs.readFileSync(path.join(projectPath, ''), 'utf8');
+let iconsResourceFile = '';
+if (fs.existsSync(path.join(projectPath, 'configfiles', 'favicon.png'))){
+    console.log('ICON DETECTED!!');
+    // copyFileSync - нет такой функции в NodeJS v.6 => обхожу его использование через системный вызов
+    //fs.copyFileSync(path.join(projectPath, 'configfiles', 'favicon.png'), targetPath);//path.join(targetPath, 'favicon.png'));
+    execSync('cp  ' + path.join(projectPath, 'configfiles', 'favicon.png') + ' ' + targetPath + '/django_project/static/root_app/');
+    iconsResourceFile += '\n<link href="{% static \'root_app/favicon.png\' %}" rel="shortcut icon" type="image/x-icon" />';
+}
+iconsResourceFile = fs.readFileSync(path.join(targetPath, 'django_project/templates/root_app/index.html'), 'utf8').replace('[ code here: favicon ]', iconsResourceFile);
+fs.writeFileSync(path.join(targetPath, 'django_project/templates/root_app/index.html'), iconsResourceFile);
