@@ -17,6 +17,8 @@ if (process.argv.length !== 4){
 const projectPath = process.argv[2];
 const targetPath = process.argv[3];
 // вставить проверку существования директорий, пути к которым переданы в аргументах к данному скрипту
+
+// Фрагмент мёртвого кода: пока функции, обеспечивающие API сервера, не генерируются
 var api = fs.readFileSync(path.join(projectPath, 'api'), 'utf8');
 api = eval('[' + api + ']');
 console.log('*****************');
@@ -31,3 +33,11 @@ if (fs.existsSync(path.join(projectPath, 'configfiles', 'favicon.png'))){
 }
 iconsResourceFile = fs.readFileSync(path.join(targetPath, 'django_project/templates/root_app/index.html'), 'utf8').replace('[ code here: favicon ]', iconsResourceFile);
 fs.writeFileSync(path.join(targetPath, 'django_project/templates/root_app/index.html'), iconsResourceFile);
+
+var nm; //gameplayNamesMap;
+eval('nm = ' + fs.readFileSync(path.join(projectPath, 'namesMap.json'), 'utf8'));
+var gp = fs.readFileSync(path.join(projectPath, 'gameplay.js'), 'utf8');
+var o1234 = function(p){console.log(p);};
+gp.replace(`${nm.Traliva}.${nm.init}(`, 'o1234(');
+//eval(`${}`);
+console.log(gp);
