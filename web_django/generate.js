@@ -37,7 +37,16 @@ fs.writeFileSync(path.join(targetPath, 'django_project/templates/root_app/index.
 var nm; //gameplayNamesMap;
 eval('nm = ' + fs.readFileSync(path.join(projectPath, 'namesMap.json'), 'utf8'));
 var gp = fs.readFileSync(path.join(projectPath, 'gameplay.js'), 'utf8');
-var o1234 = function(p){console.log(p);};
-gp.replace(`${nm.Traliva}.${nm.init}(`, 'o1234(');
-//eval(`${}`);
-console.log(gp);
+var traliva__o1234 = function(p){gp = p;};
+gp = gp.replace(new RegExp(`${nm.Traliva}.${nm.init}\\(`, 'g'), 'traliva__o1234(');
+
+eval(`'use strict';
+var history = {};
+${gp}`);
+// Теперь в gp - объект, передаваемый в $Traliva.$init(..).
+
+//console.log('gp:', gp); // теперь должны обойти дерево gp.tree
+var tmp = gp[nm.states];
+if (tmp)
+    tmp = tmp[nm.tree];
+console.log('tree:', tmp);
