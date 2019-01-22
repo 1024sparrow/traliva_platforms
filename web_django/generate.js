@@ -50,3 +50,68 @@ var tmp = gp[nm.states];
 if (tmp)
     tmp = tmp[nm.tree];
 console.log('tree:', tmp);
+
+var stack = JSON.parse(JSON.stringify(tmp)),
+    t1;
+tmp = '';
+while (stack.lengh){
+    t1 = stack.pop();
+    //if ()
+}
+
+/*
+urlpatterns = [
+    path('', views.index_html),
+]
+
+''
+
+'book/{NUM}/'
+    'book/{NUM}/page/{NUM}'
+    'book/{NUM}/contents'
+'books/'
+'music/{NUM}/'
+
+'auth/'
+'auth/login/'
+'auth/register/'
+
+'book/{NUM}/auth/'
+'book/{NUM}/auth/login'
+'book/{NUM}/auth/register/auth/'
+    'book/{NUM}/page/{NUM}/auth/'
+    'book/{NUM}/page/{NUM}/auth/login/'
+    'book/{NUM}/page/{NUM}/auth/register/'
+    'book/{NUM}/contents/auth/'
+    'book/{NUM}/contents/auth/login/'
+    'book/{NUM}/contents/auth/register/'
+'books/auth/'
+'books/auth/login/'
+'books/auth/register/'
+'music/{NUM}/auth/'
+'music/{NUM}/auth/login/'
+'music/{NUM}/auth/register/'
+=====================================================================
+urlpatterns0 = [
+    path('book/{NUM}/', include(urlpatterns1))
+    path('books/', views.index_html)
+    path('music/{NUM}/', views.index_html)
+]
+urlpatterns1 = [
+    path('page/{NUM}/', views.index_html)
+    path('contents', views.index_html)
+]
+urlpatterns2 = [
+    path('auth/', include(urlpatterns3))
+]
+urlpatterns3 = [
+    path('login/', views.index_html)
+    path('register/', views.index_html)
+]
+
+urlpatterns = [
+    path('', views.index_html),
+    path('', include),
+]
+
+*/
