@@ -49,15 +49,33 @@ ${gp}`);
 var tmp = gp[nm.states];
 if (tmp)
     tmp = tmp[nm.tree];
+console.log('=========================');
 console.log('tree:', tmp);
 
 var stack = JSON.parse(JSON.stringify(tmp)),
-    t1;
+    t1, t2, t3
+;
 tmp = '';
-while (stack.lengh){
-    t1 = stack.pop();
+while (stack.length){
+    t1 = stack.shift();
     //if ()
+    for (t2 in t1){
+        if (t2 === '_prepath')
+            continue;
+        t1[t2]._stack = JSON.parse(JSON.stringify(stack));
+        console.log('--:', t2);
+        if (t1._prepath === undefined)
+            t1._prepath = '';
+        console.log(t1._prepath + t2 + '/');
+        if (t1[t2].d){
+            for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
+                t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
+                stack.unshift(t1[t2].d[t3]);
+            }
+        }
+    }
 }
+console.log('=========================');
 
 /*
 urlpatterns = [
