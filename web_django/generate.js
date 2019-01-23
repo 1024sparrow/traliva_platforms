@@ -56,11 +56,13 @@ var stack = JSON.parse(JSON.stringify(tmp)),
     t1, t2, t3
 ;
 tmp = '';
+for (t1 = 0 ; t1 < stack.length ; ++t1){
+    stack[t1]._level = 0;
+}
 while (stack.length){
     t1 = stack.shift();
-    //if ()
     for (t2 in t1){
-        if (t2 === '_prepath')
+        if (t2[0] === '_')
             continue;
         t1[t2]._stack = JSON.parse(JSON.stringify(stack));
         console.log('--:', t2);
@@ -70,6 +72,8 @@ while (stack.length){
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
                 t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
+                t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack));
+                t1[t2].d[t3]._level = t1._level + 1;
                 stack.unshift(t1[t2].d[t3]);
             }
         }
