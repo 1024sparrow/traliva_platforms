@@ -53,32 +53,84 @@ console.log('=========================');
 console.log('tree:', tmp);
 
 var stack = JSON.parse(JSON.stringify(tmp)),
-    t1, t2, t3
+    stack_1, stack_2,
+    stackStarted,
+    t1, t2, t3,
+    t4, t5, t6
 ;
+stack_1 = stack.slice();
 tmp = '';
 for (t1 = 0 ; t1 < stack.length ; ++t1){
     stack[t1]._level = 0;
 }
-while (stack.length){
-    t1 = stack.shift();
+while (stack_1.length){
+    t1 = stack_1.shift();
     for (t2 in t1){
         if (t2[0] === '_')
             continue;
-        t1[t2]._stack = JSON.parse(JSON.stringify(stack));
+        //t1[t2]._stack = JSON.parse(JSON.stringify(stack_1));
         console.log('--:', t2);
         if (t1._prepath === undefined)
             t1._prepath = '';
         console.log(t1._prepath + t2 + '/');
+        t1[t2]._paths = [t1._prepath + t2 + '/'];
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
                 t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
-                t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack));
+                //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
                 t1[t2].d[t3]._level = t1._level + 1;
-                stack.unshift(t1[t2].d[t3]);
+                stack_1.unshift(t1[t2].d[t3]);
             }
         }
     }
 }
+stack_1 = stack.slice();
+console.log('---------------------');
+while_1: while (stack_1.length){
+    t1 = stack_1.shift();
+    for (t2 in t1){
+        if (t2[0] === '_')
+            continue;
+        console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
+        stack_2 = stack_1.slice();
+        stackStarted = false;
+        while_2: while (stack_2.length){
+            t4 = stack_2.shift();
+            if (!stackStarted){
+                if (t4._level > t1._level)
+                    ;//continue while_2;
+                else
+                    stackStarted = true;
+            }
+            for (t5 in t4){
+                if (t5[0] === '_')
+                    continue;
+                if (stackStarted){
+                    console.log(`add ${JSON.stringify(t4[t5]._paths)} to ${JSON.stringify(t1[t2]._paths)}`);
+                    t4[t5]._paths = t1[t2]._paths.concat(t4[t5]._paths);
+                }
+                //t1[t2]._paths = t4[t5]._paths.concat(t4[t5]._paths);
+                //console.log('\t\t', t4[t5]._paths);
+                if (t4[t5].d){
+                    for (t6 = 0 ; t6 < t4[t5].d.length ; ++t6){
+                        stack_2.unshift(t4[t5].d[t6]);
+                    }
+                }
+            }
+        }
+        if (t1[t2].d){
+            for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
+                //t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
+                //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
+                //t1[t2].d[t3]._level = t1._level + 1;
+                stack_1.unshift(t1[t2].d[t3]);
+            }
+        }
+    }
+}
+console.log('result tree:');
+console.log('============');
+console.log(JSON.stringify(stack, undefined, 2));
 console.log('=========================');
 
 /*
