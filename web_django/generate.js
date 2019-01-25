@@ -60,8 +60,10 @@ var stack = JSON.parse(JSON.stringify(tmp)),
 ;
 stack_1 = stack.slice();
 tmp = '';
+let levelCounter = 0;
 for (t1 = 0 ; t1 < stack.length ; ++t1){
-    stack[t1]._level = 0;
+    stack[t1]._level = ++levelCounter;
+    //stack[t1]._isRoot = true;
 }
 while (stack_1.length){
     t1 = stack_1.shift();
@@ -77,8 +79,10 @@ while (stack_1.length){
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
                 t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
+                t1[t2].d[t3]._isRoot = true;
                 //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
-                t1[t2].d[t3]._level = t1._level + 1;
+                //t1[t2].d[t3]._level = t1._level + 1;
+                t1[t2].d[t3]._level = ++levelCounter;
                 stack_1.unshift(t1[t2].d[t3]);
             }
         }
@@ -94,21 +98,28 @@ while_1: while (stack_1.length){
         console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
         stack_2 = stack_1.slice();
         stackStarted = false;
+        stackStarted = true;//
         while_2: while (stack_2.length){
             t4 = stack_2.shift();
-            if (!stackStarted){
-                if (t4._level > t1._level)
+            /*if (!stackStarted){
+                if (t4._level === t1._level)
                     ;//continue while_2;
                 else
                     stackStarted = true;
-            }
+            }*/
+            if (t4._level <= t1.level)
+                continue while_2;
+            console.log('  LEVEL:', t1._level, t4._level);
             for (t5 in t4){
                 if (t5[0] === '_')
                     continue;
                 if (stackStarted){
-                    console.log(`add ${JSON.stringify(t4[t5]._paths)} to ${JSON.stringify(t1[t2]._paths)}`);
-                    t4[t5]._paths = t1[t2]._paths.concat(t4[t5]._paths);
+                    //console.log(`add ${JSON.stringify(t4[t5]._paths)} to ${JSON.stringify(t1[t2]._paths)}`);
+                    console.log(`\tadd ${JSON.stringify(t1[t2]._paths)} to ${JSON.stringify(t4[t5]._paths)}`);
+                    //t4[t5]._paths = t1[t2]._paths.concat(t4[t5]._paths);
                 }
+                else
+                    console.log(`${t5}: not started yet...`);
                 //t1[t2]._paths = t4[t5]._paths.concat(t4[t5]._paths);
                 //console.log('\t\t', t4[t5]._paths);
                 if (t4[t5].d){
