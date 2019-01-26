@@ -56,13 +56,14 @@ var stack = JSON.parse(JSON.stringify(tmp)),
     stack_1, stack_2,
     stackStarted,
     t1, t2, t3,
-    t4, t5, t6
+    t4, t5, t6,
+    t7, t8, t9
 ;
 stack_1 = stack.slice();
 tmp = '';
 let levelCounter = 0;
 for (t1 = 0 ; t1 < stack.length ; ++t1){
-    stack[t1]._level = ++levelCounter;
+    stack[t1]._level = 0;
     //stack[t1]._isRoot = true;
 }
 while (stack_1.length){
@@ -81,8 +82,8 @@ while (stack_1.length){
                 t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
                 t1[t2].d[t3]._isRoot = true;
                 //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
-                //t1[t2].d[t3]._level = t1._level + 1;
-                t1[t2].d[t3]._level = ++levelCounter;
+                t1[t2].d[t3]._level = t1._level + 1;
+                //t1[t2].d[t3]._level = ++levelCounter;
                 stack_1.unshift(t1[t2].d[t3]);
             }
         }
@@ -98,15 +99,18 @@ while_1: while (stack_1.length){
         console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
         stack_2 = stack_1.slice();
         stackStarted = false;
-        stackStarted = true;//
+        console.log('&*^%*&^%*&^% reseting *&^%&*^%&*%');
+        //stackStarted = true;//
         while_2: while (stack_2.length){
             t4 = stack_2.shift();
-            /*if (!stackStarted){
-                if (t4._level === t1._level)
-                    ;//continue while_2;
+            if (!stackStarted){
+                if (t4._level > t1._level){
+                    console.log('passing');
+                    continue while_2;
+                }
                 else
                     stackStarted = true;
-            }*/
+            }
             if (t4._level <= t1.level)
                 continue while_2;
             console.log('  LEVEL:', t1._level, t4._level);
@@ -114,13 +118,10 @@ while_1: while (stack_1.length){
                 if (t5[0] === '_')
                     continue;
                 if (stackStarted){
-                    //console.log(`add ${JSON.stringify(t4[t5]._paths)} to ${JSON.stringify(t1[t2]._paths)}`);
-                    console.log(`\tadd ${JSON.stringify(t1[t2]._paths)} to ${JSON.stringify(t4[t5]._paths)}`);
-                    //t4[t5]._paths = t1[t2]._paths.concat(t4[t5]._paths);
+                    t4[t5]._paths.push(t1[t2]._paths[0] + t4[t5]._paths[0]);
                 }
                 else
                     console.log(`${t5}: not started yet...`);
-                //t1[t2]._paths = t4[t5]._paths.concat(t4[t5]._paths);
                 //console.log('\t\t', t4[t5]._paths);
                 if (t4[t5].d){
                     for (t6 = 0 ; t6 < t4[t5].d.length ; ++t6){
@@ -131,9 +132,6 @@ while_1: while (stack_1.length){
         }
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
-                //t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
-                //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
-                //t1[t2].d[t3]._level = t1._level + 1;
                 stack_1.unshift(t1[t2].d[t3]);
             }
         }
@@ -143,6 +141,28 @@ console.log('result tree:');
 console.log('============');
 console.log(JSON.stringify(stack, undefined, 2));
 console.log('=========================');
+
+console.log('URLS:');
+console.log('=====');
+stack_1 = stack.slice();
+while (stack_1.length){
+    t1 = stack_1.shift();
+    //console.log(t1);
+    for (t2 in t1){
+        if (t2[0] === '_')
+            continue;
+        //console.log(t1[t2]);
+        for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
+            console.log(t1[t2]._paths[t3]);
+        }
+        if (t1[t2].d){
+            for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
+                stack_1.unshift(t1[t2].d[t3]);
+            }
+        }
+    }
+}
+console.log('---------');
 
 /*
 urlpatterns = [
