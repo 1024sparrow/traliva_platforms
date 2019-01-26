@@ -50,7 +50,7 @@ var tmp = gp[nm.states];
 if (tmp)
     tmp = tmp[nm.tree];
 console.log('=========================');
-console.log('tree:', tmp);
+console.log('tree:\n=====\n', JSON.stringify(tmp, undefined, 2));
 
 var stack = JSON.parse(JSON.stringify(tmp)),
     stack_1, stack_2,
@@ -64,6 +64,7 @@ tmp = '';
 let levelCounter = 0;
 for (t1 = 0 ; t1 < stack.length ; ++t1){
     stack[t1]._level = 0;
+    stack[t1]._getParent = function(){};
     //stack[t1]._isRoot = true;
 }
 while (stack_1.length){
@@ -76,9 +77,11 @@ while (stack_1.length){
         if (t1._prepath === undefined)
             t1._prepath = '';
         console.log(t1._prepath + t2 + '/');
-        t1[t2]._paths = [t1._prepath + t2 + '/'];
+        //t1[t2]._paths = [t1._prepath + t2 + '/'];
+        t1[t2]._paths = [t1._prepath + t2 + '/']; // boris here: пкркходу со списка строк на список массивов ссылок на узлы дерева, чтобы потом в одном цикле, используя _getParent(), развернуть этот массивов ссылок на узлы дерева в строку пути
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
+                t1[t2].d[t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1);
                 t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
                 t1[t2].d[t3]._isRoot = true;
                 //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
@@ -118,20 +121,23 @@ while_1: while (stack_1.length){
                 if (t5[0] === '_')
                     continue;
                 if (stackStarted){
+                    console.log(`t4[t5]._paths.push(${t1[t2]._paths[0]} + ${t4[t5]._paths[0]})`);
                     t4[t5]._paths.push(t1[t2]._paths[0] + t4[t5]._paths[0]);
                 }
                 else
                     console.log(`${t5}: not started yet...`);
                 //console.log('\t\t', t4[t5]._paths);
                 if (t4[t5].d){
-                    for (t6 = 0 ; t6 < t4[t5].d.length ; ++t6){
+                    //for (t6 = 0 ; t6 < t4[t5].d.length ; ++t6){
+                    for (t6 = t4[t5].d.length - 1 ; t6 >= 0  ; --t6){
                         stack_2.unshift(t4[t5].d[t6]);
                     }
                 }
             }
         }
         if (t1[t2].d){
-            for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
+            //for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
+            for (t3 = t1[t2].d.length - 1 ; t3 >= 0 ; --t3){
                 stack_1.unshift(t1[t2].d[t3]);
             }
         }
@@ -139,8 +145,12 @@ while_1: while (stack_1.length){
 }
 console.log('result tree:');
 console.log('============');
-console.log(JSON.stringify(stack, undefined, 2));
-console.log('=========================');
+console.log(JSON.stringify(stack, function(p_key, p_val){
+    if (typeof p_val === 'function')
+        return '<function>';
+    return p_val;
+}, 2));
+//console.log('=========================');
 
 console.log('URLS:');
 console.log('=====');
