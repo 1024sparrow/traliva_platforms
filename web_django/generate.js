@@ -65,28 +65,32 @@ let levelCounter = 0;
 for (t1 = 0 ; t1 < stack.length ; ++t1){
     stack[t1]._level = 0;
     stack[t1]._getParent = function(){};
-    //stack[t1]._isRoot = true;
+    stack[t1]._paths = [];
+    stack[t1]._isRoot = true;
 }
 while (stack_1.length){
     t1 = stack_1.shift();
     for (t2 in t1){
         if (t2[0] === '_')
             continue;
-        //t1[t2]._stack = JSON.parse(JSON.stringify(stack_1));
         console.log('--:', t2);
-        if (t1._prepath === undefined)
-            t1._prepath = '';
-        console.log(t1._prepath + t2 + '/');
-        //t1[t2]._paths = [t1._prepath + t2 + '/'];
-        t1[t2]._paths = [t1._prepath + t2 + '/']; // boris here: пкркходу со списка строк на список массивов ссылок на узлы дерева, чтобы потом в одном цикле, используя _getParent(), развернуть этот массивов ссылок на узлы дерева в строку пути
+        t1[t2]._name = t2;
+        t1[t2]._paths = [];
+        if (t3 = t1._getParent()){
+            //console.log('t3 = ', t3);
+            t1[t2]._paths.push(t3._paths[0].slice());
+        }
+        else{
+            //console.log('parent is not defined');
+            t1[t2]._paths.push([]);
+        }
+        t1[t2]._paths[0].push({name: t2, node: t1});
+        console.log(`paths(${t1[t2]._paths[0].length}):`, t1[t2]._paths[0]);//
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
-                t1[t2].d[t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1);
-                t1[t2].d[t3]._prepath = t1._prepath + `${t2}/`;
+                t1[t2].d[t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1[t2]);
                 t1[t2].d[t3]._isRoot = true;
-                //t1[t2].d[t3]._stack = JSON.parse(JSON.stringify(stack_1));
                 t1[t2].d[t3]._level = t1._level + 1;
-                //t1[t2].d[t3]._level = ++levelCounter;
                 stack_1.unshift(t1[t2].d[t3]);
             }
         }
@@ -99,30 +103,46 @@ while_1: while (stack_1.length){
     for (t2 in t1){
         if (t2[0] === '_')
             continue;
-        console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
+        console.log('--', t2);//
+        //console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
         stack_2 = stack_1.slice();
         stackStarted = false;
-        console.log('&*^%*&^%*&^% reseting *&^%&*^%&*%');
-        //stackStarted = true;//
+        console.log('************ reseting ***********');
+        stackStarted = true;//
         while_2: while (stack_2.length){
             t4 = stack_2.shift();
-            if (!stackStarted){
-                if (t4._level > t1._level){
+            console.log('  LEVEL:', t1._level, t4._level);
+            /*if (!stackStarted){
+                if (t1._level <= t4._level){
                     console.log('passing');
                     continue while_2;
                 }
                 else
                     stackStarted = true;
-            }
-            if (t4._level <= t1.level)
-                continue while_2;
-            console.log('  LEVEL:', t1._level, t4._level);
+            }*/
+            //if (t4._level <= t1._level)
+            //    continue while_2;
             for (t5 in t4){
+                console.log('::', t5);//
                 if (t5[0] === '_')
                     continue;
                 if (stackStarted){
-                    console.log(`t4[t5]._paths.push(${t1[t2]._paths[0]} + ${t4[t5]._paths[0]})`);
-                    t4[t5]._paths.push(t1[t2]._paths[0] + t4[t5]._paths[0]);
+                    //console.log(`t4[t5]._paths.push(${t1[t2]._paths[0].name} + ${t4[t5]._paths[0].name})`);
+                    let cand;// = t1[t2]._paths[0].concat(t4[t5]._paths[0])
+                    //console.log('PUSH\n', cand, '\n+\n', t4[t5]._paths);
+                    //t4[t5]._paths.unshift(cand);
+                    for (t6 = 0 ; t6 < t1[t2]._paths.length ; ++t6){
+                        cand = t1[t2]._paths[t6].concat(t4[t5]._paths[0]);
+                        //console.log('PUSH\n', cand, '\n+\n', t4[t5]._paths);
+                        t4[t5]._paths.push(cand);
+                    }
+                    /*let s = t4[t5]._paths.slice();
+                    while (s.length){
+                        let a = s.shift().slice(),
+                            b = t1[t2]._paths.slice();
+                        //
+                    }*/
+                    //t4[t5]._paths.push(t1[t2]._paths[0] + t4[t5]._paths[0]); // <------------
                 }
                 else
                     console.log(`${t5}: not started yet...`);
@@ -148,6 +168,8 @@ console.log('============');
 console.log(JSON.stringify(stack, function(p_key, p_val){
     if (typeof p_val === 'function')
         return '<function>';
+    if (p_key === '_paths') // p_value must be instance of Array
+        return `<array(${p_val.length})>`;
     return p_val;
 }, 2));
 //console.log('=========================');
@@ -161,9 +183,15 @@ while (stack_1.length){
     for (t2 in t1){
         if (t2[0] === '_')
             continue;
+        console.log('--', t2);//
         //console.log(t1[t2]);
         for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
-            console.log(t1[t2]._paths[t3]);
+            //console.log(t1[t2]._paths[t3]);
+            let cand = '';
+            for (t4 of t1[t2]._paths[t3]){
+                cand += t4.name + '/';
+            }
+            console.log(cand);
         }
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
@@ -174,6 +202,7 @@ while (stack_1.length){
 }
 console.log('---------');
 
+///////////////////////////////////////
 /*
 urlpatterns = [
     path('', views.index_html),
