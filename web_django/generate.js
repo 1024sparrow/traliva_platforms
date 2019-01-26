@@ -55,9 +55,11 @@ console.log('tree:\n=====\n', JSON.stringify(tmp, undefined, 2));
 var stack = JSON.parse(JSON.stringify(tmp)),
     stack_1, stack_2,
     stackStarted,
+    cand,
     t1, t2, t3,
     t4, t5, t6,
-    t7, t8, t9
+    t7, t8, t9,
+    t10, t11, t12
 ;
 stack_1 = stack.slice();
 tmp = '';
@@ -127,22 +129,26 @@ while_1: while (stack_1.length){
                 if (t5[0] === '_')
                     continue;
                 if (stackStarted){
-                    //console.log(`t4[t5]._paths.push(${t1[t2]._paths[0].name} + ${t4[t5]._paths[0].name})`);
-                    let cand;// = t1[t2]._paths[0].concat(t4[t5]._paths[0])
-                    //console.log('PUSH\n', cand, '\n+\n', t4[t5]._paths);
-                    //t4[t5]._paths.unshift(cand);
-                    for (t6 = 0 ; t6 < t1[t2]._paths.length ; ++t6){
+                    for_6:for (t6 = 0 ; t6 < t1[t2]._paths.length ; ++t6){
+                        t7 = [];//nodes
+                        t8 = [];//names
+                        for (t9 = 0 ; t9 < t1[t2]._paths[t6].length ; ++t9){
+                            t10 = t1[t2]._paths[t6][t9];
+                            t7.push(t10.node);
+                            t8.push(t10.name);
+                        }
+                        for (t9 = 0 ; t9 < t4[t5]._paths[0].length ; ++t9){
+                            t10 = t4[t5]._paths[0][t9];
+                            t11 = t7.indexOf(t10.node);
+                            if (t11 >= 0){
+                                if (t8[t11] !== t10.name){
+                                    continue for_6;
+                                }
+                            }
+                        }
                         cand = t1[t2]._paths[t6].concat(t4[t5]._paths[0]);
-                        //console.log('PUSH\n', cand, '\n+\n', t4[t5]._paths);
                         t4[t5]._paths.push(cand);
                     }
-                    /*let s = t4[t5]._paths.slice();
-                    while (s.length){
-                        let a = s.shift().slice(),
-                            b = t1[t2]._paths.slice();
-                        //
-                    }*/
-                    //t4[t5]._paths.push(t1[t2]._paths[0] + t4[t5]._paths[0]); // <------------
                 }
                 else
                     console.log(`${t5}: not started yet...`);
@@ -191,7 +197,7 @@ while (stack_1.length){
             for (t4 of t1[t2]._paths[t3]){
                 cand += t4.name + '/';
             }
-            console.log(cand);
+            console.log(cand, '(избыточная форма)');
 
             t6 = []; // список объектов, которые были упомянуты
             for (t4 = 0 ; t4 < t1[t2]._paths[t3].length ; ++t4){
