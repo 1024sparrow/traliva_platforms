@@ -187,11 +187,24 @@ while (stack_1.length){
         //console.log(t1[t2]);
         for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
             //console.log(t1[t2]._paths[t3]);
-            let cand = '';
+            let cand = '', cand2 = '';
             for (t4 of t1[t2]._paths[t3]){
                 cand += t4.name + '/';
             }
             console.log(cand);
+
+            t6 = []; // список объектов, которые были упомянуты
+            for (t4 = 0 ; t4 < t1[t2]._paths[t3].length ; ++t4){
+                t5 = t1[t2]._paths[t3][t4];
+                if (t6.indexOf(t5.node) < 0){
+                    cand2 += t5.name + '/';
+                    t6.push(t5.node);
+                }
+                else{
+                    console.log('BORIS: ', t5.name);
+                }
+            }
+            console.log('\t', cand2);
         }
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
