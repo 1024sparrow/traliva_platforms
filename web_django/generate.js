@@ -55,7 +55,7 @@ console.log('tree:\n=====\n', JSON.stringify(tmp, undefined, 2));
 var stack = JSON.parse(JSON.stringify(tmp)),
     stack_1, stack_2,
     stackStarted,
-    cand,
+    cand, urls,
     t1, t2, t3,
     t4, t5, t6,
     t7, t8, t9,
@@ -183,21 +183,22 @@ console.log(JSON.stringify(stack, function(p_key, p_val){
 console.log('URLS:');
 console.log('=====');
 stack_1 = stack.slice();
+urls = [];
 while (stack_1.length){
     t1 = stack_1.shift();
-    //console.log(t1);
+    ////console.log(t1);
     for (t2 in t1){
         if (t2[0] === '_')
             continue;
-        console.log('--', t2);//
-        //console.log(t1[t2]);
+        //console.log('--', t2);//
+        ////console.log(t1[t2]);
         for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
-            //console.log(t1[t2]._paths[t3]);
+            ////console.log(t1[t2]._paths[t3]);
             let cand = '', cand2 = '';
             for (t4 of t1[t2]._paths[t3]){
                 cand += t4.name + '/';
             }
-            console.log(cand, '(избыточная форма)');
+            //console.log(cand, '(избыточная форма)');
 
             t6 = []; // список объектов, которые были упомянуты
             for (t4 = 0 ; t4 < t1[t2]._paths[t3].length ; ++t4){
@@ -207,10 +208,14 @@ while (stack_1.length){
                     t6.push(t5.node);
                 }
                 else{
-                    console.log('BORIS: ', t5.name);
+                    //console.log('BORIS: ', t5.name);
                 }
             }
-            console.log('\t', cand2);
+            //console.log(t1[t2].hasOwnProperty('d'), '\t', cand2);
+            urls.push({
+                path: cand2,
+                obj: t1[t2]
+            });
         }
         if (t1[t2].d){
             for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
@@ -220,6 +225,23 @@ while (stack_1.length){
     }
 }
 console.log('---------');
+var urlsFile = '';
+for (t1 = 0, t2 = urls.length ; t1 < t2 ; ++t1){
+    t3 = urls.shift();
+    //t4 = 'qwe' + t3.path;
+    t4 = '\n    path(\'' + t3.path + '\', views.index_html),';
+    urlsFile += t4;
+    urls.push(t4);
+}
+t1 = path.join(targetPath, 'django_project/root_app/urls.py');
+urlsFile = fs.readFileSync(t1, 'utf8').replace('[ code here: urls ]', urlsFile);
+fs.writeFileSync(t1, urlsFile);
+
+/*console.log('URLS: ', 'urls');
+for (t1 of urls){
+    console.log(t1);
+}*/
+
 
 ///////////////////////////////////////
 /*
