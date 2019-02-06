@@ -88,12 +88,12 @@ while (stack_1.length){
         }
         t1[t2]._paths[0].push({name: t2, node: t1});
         console.log(`paths(${t1[t2]._paths[0].length}):`, t1[t2]._paths[0]);//
-        if (t1[t2].d){
-            for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
-                t1[t2].d[t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1[t2]);
-                t1[t2].d[t3]._isRoot = true;
-                t1[t2].d[t3]._level = t1._level + 1;
-                stack_1.unshift(t1[t2].d[t3]);
+        if (t1[t2][nm['d']]){
+            for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
+                t1[t2][nm['d']][t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1[t2]);
+                t1[t2][nm['d']][t3]._isRoot = true;
+                t1[t2][nm['d']][t3]._level = t1._level + 1;
+                stack_1.unshift(t1[t2][nm['d']][t3]);
             }
         }
     }
@@ -153,18 +153,18 @@ while_1: while (stack_1.length){
                 else
                     console.log(`${t5}: not started yet...`);
                 //console.log('\t\t', t4[t5]._paths);
-                if (t4[t5].d){
-                    //for (t6 = 0 ; t6 < t4[t5].d.length ; ++t6){
-                    for (t6 = t4[t5].d.length - 1 ; t6 >= 0  ; --t6){
-                        stack_2.unshift(t4[t5].d[t6]);
+                if (t4[t5][nm['d']]){
+                    //for (t6 = 0 ; t6 < t4[t5][nm['d']].length ; ++t6){
+                    for (t6 = t4[t5][nm['d']].length - 1 ; t6 >= 0  ; --t6){
+                        stack_2.unshift(t4[t5][nm['d']][t6]);
                     }
                 }
             }
         }
-        if (t1[t2].d){
-            //for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
-            for (t3 = t1[t2].d.length - 1 ; t3 >= 0 ; --t3){
-                stack_1.unshift(t1[t2].d[t3]);
+        if (t1[t2][nm['d']]){
+            //for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
+            for (t3 = t1[t2][nm['d']].length - 1 ; t3 >= 0 ; --t3){
+                stack_1.unshift(t1[t2][nm['d']][t3]);
             }
         }
     }
@@ -211,15 +211,15 @@ while (stack_1.length){
                     //console.log('BORIS: ', t5.name);
                 }
             }
-            //console.log(t1[t2].hasOwnProperty('d'), '\t', cand2);
+            //console.log(t1[t2].hasOwnProperty(nm['d']), '\t', cand2);
             urls.push({
                 path: cand2,
                 obj: t1[t2]
             });
         }
-        if (t1[t2].d){
-            for (t3 = 0 ; t3 < t1[t2].d.length ; ++t3){
-                stack_1.unshift(t1[t2].d[t3]);
+        if (t1[t2][nm['d']]){
+            for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
+                stack_1.unshift(t1[t2][nm['d']][t3]);
             }
         }
     }
