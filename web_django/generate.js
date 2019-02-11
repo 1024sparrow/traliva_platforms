@@ -205,6 +205,12 @@ while (stack_1.length){
                 t5 = t1[t2]._paths[t3][t4];
                 if (t6.indexOf(t5.node) < 0){
                     cand2 += t5.name + '/';
+                    console.log('-- ', t5.name, ' : ',nm.params,'\n', t5.node);
+                    if (t5.node[t5.name].hasOwnProperty(nm.params)){
+                        for (t7 = 0 ; t7 < t5.node[t5.name][nm.params].length ; ++t7){
+                            cand2 += 'xx/';
+                        }
+                    }
                     t6.push(t5.node);
                 }
                 else{
@@ -214,7 +220,8 @@ while (stack_1.length){
             //console.log(t1[t2].hasOwnProperty(nm['d']), '\t', cand2);
             urls.push({
                 path: cand2,
-                obj: t1[t2]
+                obj: t1[t2],
+                regExpNeeded: false // boris here
             });
         }
         if (t1[t2][nm['d']]){
@@ -229,7 +236,15 @@ var urlsFile = '';
 for (t1 = 0, t2 = urls.length ; t1 < t2 ; ++t1){
     t3 = urls.shift();
     //t4 = 'qwe' + t3.path;
-    t4 = '\n    path(\'' + t3.path + '\', views.index_html),';
+    if (t3.obj[nm['params']]){
+        console.log('##############################');
+        console.log(t3.obj);//
+        console.log('t3.path:\n', t3.path);
+        t4 = '\n    re_path(r\'' + t3.path + '\', views.index_html),';
+    }
+    else
+        t4 = '\n    path(\'' + t3.path + '\', views.index_html),';
+    //re_path(r'', views.index_html),
     urlsFile += t4;
     urls.push(t4);
 }
