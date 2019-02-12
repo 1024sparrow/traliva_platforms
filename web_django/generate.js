@@ -194,7 +194,7 @@ while (stack_1.length){
         ////console.log(t1[t2]);
         for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
             ////console.log(t1[t2]._paths[t3]);
-            let cand = '', cand2 = '';
+            let cand = '', cand2 = '', regExpNeeded = false;
             for (t4 of t1[t2]._paths[t3]){
                 cand += t4.name + '/';
             }
@@ -208,7 +208,8 @@ while (stack_1.length){
                     console.log('-- ', t5.name, ' : ',nm.params,'\n', t5.node);
                     if (t5.node[t5.name].hasOwnProperty(nm.params)){
                         for (t7 = 0 ; t7 < t5.node[t5.name][nm.params].length ; ++t7){
-                            cand2 += 'xx/';
+                            cand2 += '[^/]+/';
+                            regExpNeeded = true;
                         }
                     }
                     t6.push(t5.node);
@@ -221,7 +222,7 @@ while (stack_1.length){
             urls.push({
                 path: cand2,
                 obj: t1[t2],
-                regExpNeeded: false // boris here
+                regExpNeeded: regExpNeeded
             });
         }
         if (t1[t2][nm['d']]){
@@ -236,21 +237,27 @@ var urlsFile = '';
 for (t1 = 0, t2 = urls.length ; t1 < t2 ; ++t1){
     t3 = urls.shift();
     //t4 = 'qwe' + t3.path;
-    if (t3.obj[nm['params']]){
+    //if (t3.obj[nm['params']]){
+    if (t3.regExpNeeded){
         console.log('##############################');
         console.log(t3.obj);//
         console.log('t3.path:\n', t3.path);
-        t4 = '\n    re_path(r\'' + t3.path + '\', views.index_html),';
+        t4 = '\n    re_path(r\'^' + t3.path + '$\', views.index_html),';
     }
     else
         t4 = '\n    path(\'' + t3.path + '\', views.index_html),';
     //re_path(r'', views.index_html),
     urlsFile += t4;
+    //console.log(t4);//
     urls.push(t4);
 }
+console.log(urlsFile);//
 t1 = path.join(targetPath, 'django_project/root_app/urls.py');
-urlsFile = fs.readFileSync(t1, 'utf8').replace('[ code here: urls ]', urlsFile);
-fs.writeFileSync(t1, urlsFile);
+t2 = fs.readFileSync(t1, 'utf8');
+t3 = t2.indexOf('[ code here: urls ]');
+if (t3 >= 0)
+    t2 = t2.slice(0, t3) + urlsFile + t2.slice(t3 + 19); // 19 - length of '[ code here: urls ]'
+fs.writeFileSync(t1, t2);
 
 /*console.log('URLS: ', 'urls');
 for (t1 of urls){
