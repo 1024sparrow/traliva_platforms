@@ -48,208 +48,210 @@ ${gp}`);
 //console.log('gp:', gp); // теперь должны обойти дерево gp.tree
 var tmp = gp[nm.states];
 if (tmp)
-    tmp = tmp[nm.tree];
+    tmp = nm.tree ? tmp[nm.tree] : undefined;
 console.log('=========================');
 console.log('tree:\n=====\n', JSON.stringify(tmp, undefined, 2));
 
-var stack = JSON.parse(JSON.stringify(tmp)),
+var stack,
     stack_1, stack_2,
     stackStarted,
-    cand, urls,
+    cand, urls, urlsFile = '',
     t1, t2, t3,
     t4, t5, t6,
     t7, t8, t9,
     t10, t11, t12
 ;
-stack_1 = stack.slice();
-tmp = '';
-let levelCounter = 0;
-for (t1 = 0 ; t1 < stack.length ; ++t1){
-    stack[t1]._level = 0;
-    stack[t1]._getParent = function(){};
-    stack[t1]._paths = [];
-    stack[t1]._isRoot = true;
-}
-while (stack_1.length){
-    t1 = stack_1.shift();
-    for (t2 in t1){
-        if (t2[0] === '_')
-            continue;
-        console.log('--:', t2);
-        t1[t2]._name = t2;
-        t1[t2]._paths = [];
-        if (t3 = t1._getParent()){
-            //console.log('t3 = ', t3);
-            t1[t2]._paths.push(t3._paths[0].slice());
-        }
-        else{
-            //console.log('parent is not defined');
-            t1[t2]._paths.push([]);
-        }
-        t1[t2]._paths[0].push({name: t2, node: t1});
-        console.log(`paths(${t1[t2]._paths[0].length}):`, t1[t2]._paths[0]);//
-        if (t1[t2][nm['d']]){
-            for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
-                t1[t2][nm['d']][t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1[t2]);
-                t1[t2][nm['d']][t3]._isRoot = true;
-                t1[t2][nm['d']][t3]._level = t1._level + 1;
-                stack_1.unshift(t1[t2][nm['d']][t3]);
+if (tmp){
+    stack = JSON.parse(JSON.stringify(tmp));
+    stack_1 = stack.slice();
+    tmp = '';
+    let levelCounter = 0;
+    for (t1 = 0 ; t1 < stack.length ; ++t1){
+        stack[t1]._level = 0;
+        stack[t1]._getParent = function(){};
+        stack[t1]._paths = [];
+        stack[t1]._isRoot = true;
+    }
+    while (stack_1.length){
+        t1 = stack_1.shift();
+        for (t2 in t1){
+            if (t2[0] === '_')
+                continue;
+            console.log('--:', t2);
+            t1[t2]._name = t2;
+            t1[t2]._paths = [];
+            if (t3 = t1._getParent()){
+                //console.log('t3 = ', t3);
+                t1[t2]._paths.push(t3._paths[0].slice());
+            }
+            else{
+                //console.log('parent is not defined');
+                t1[t2]._paths.push([]);
+            }
+            t1[t2]._paths[0].push({name: t2, node: t1});
+            console.log(`paths(${t1[t2]._paths[0].length}):`, t1[t2]._paths[0]);//
+            if (t1[t2][nm['d']]){
+                for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
+                    t1[t2][nm['d']][t3]._getParent = (function(p_parent){return function(){return p_parent;};})(t1[t2]);
+                    t1[t2][nm['d']][t3]._isRoot = true;
+                    t1[t2][nm['d']][t3]._level = t1._level + 1;
+                    stack_1.unshift(t1[t2][nm['d']][t3]);
+                }
             }
         }
     }
-}
-stack_1 = stack.slice();
-console.log('---------------------');
-while_1: while (stack_1.length){
-    t1 = stack_1.shift();
-    for (t2 in t1){
-        if (t2[0] === '_')
-            continue;
-        console.log('--', t2);//
-        //console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
-        stack_2 = stack_1.slice();
-        stackStarted = false;
-        console.log('************ reseting ***********');
-        stackStarted = true;//
-        while_2: while (stack_2.length){
-            t4 = stack_2.shift();
-            console.log('  LEVEL:', t1._level, t4._level);
-            /*if (!stackStarted){
-                if (t1._level <= t4._level){
-                    console.log('passing');
-                    continue while_2;
-                }
-                else
-                    stackStarted = true;
-            }*/
-            //if (t4._level <= t1._level)
-            //    continue while_2;
-            for (t5 in t4){
-                console.log('::', t5);//
-                if (t5[0] === '_')
-                    continue;
-                if (stackStarted){
-                    for_6:for (t6 = 0 ; t6 < t1[t2]._paths.length ; ++t6){
-                        t7 = [];//nodes
-                        t8 = [];//names
-                        for (t9 = 0 ; t9 < t1[t2]._paths[t6].length ; ++t9){
-                            t10 = t1[t2]._paths[t6][t9];
-                            t7.push(t10.node);
-                            t8.push(t10.name);
-                        }
-                        for (t9 = 0 ; t9 < t4[t5]._paths[0].length ; ++t9){
-                            t10 = t4[t5]._paths[0][t9];
-                            t11 = t7.indexOf(t10.node);
-                            if (t11 >= 0){
-                                if (t8[t11] !== t10.name){
-                                    continue for_6;
+    stack_1 = stack.slice();
+    console.log('---------------------');
+    while_1: while (stack_1.length){
+        t1 = stack_1.shift();
+        for (t2 in t1){
+            if (t2[0] === '_')
+                continue;
+            console.log('--', t2);//
+            //console.log('--:', t2, ' ---> ', t1[t2]._paths, ', level: ', t1._level);
+            stack_2 = stack_1.slice();
+            stackStarted = false;
+            console.log('************ reseting ***********');
+            stackStarted = true;//
+            while_2: while (stack_2.length){
+                t4 = stack_2.shift();
+                console.log('  LEVEL:', t1._level, t4._level);
+                /*if (!stackStarted){
+                    if (t1._level <= t4._level){
+                        console.log('passing');
+                        continue while_2;
+                    }
+                    else
+                        stackStarted = true;
+                }*/
+                //if (t4._level <= t1._level)
+                //    continue while_2;
+                for (t5 in t4){
+                    console.log('::', t5);//
+                    if (t5[0] === '_')
+                        continue;
+                    if (stackStarted){
+                        for_6:for (t6 = 0 ; t6 < t1[t2]._paths.length ; ++t6){
+                            t7 = [];//nodes
+                            t8 = [];//names
+                            for (t9 = 0 ; t9 < t1[t2]._paths[t6].length ; ++t9){
+                                t10 = t1[t2]._paths[t6][t9];
+                                t7.push(t10.node);
+                                t8.push(t10.name);
+                            }
+                            for (t9 = 0 ; t9 < t4[t5]._paths[0].length ; ++t9){
+                                t10 = t4[t5]._paths[0][t9];
+                                t11 = t7.indexOf(t10.node);
+                                if (t11 >= 0){
+                                    if (t8[t11] !== t10.name){
+                                        continue for_6;
+                                    }
                                 }
                             }
-                        }
-                        cand = t1[t2]._paths[t6].concat(t4[t5]._paths[0]);
-                        t4[t5]._paths.push(cand);
-                    }
-                }
-                else
-                    console.log(`${t5}: not started yet...`);
-                //console.log('\t\t', t4[t5]._paths);
-                if (t4[t5][nm['d']]){
-                    //for (t6 = 0 ; t6 < t4[t5][nm['d']].length ; ++t6){
-                    for (t6 = t4[t5][nm['d']].length - 1 ; t6 >= 0  ; --t6){
-                        stack_2.unshift(t4[t5][nm['d']][t6]);
-                    }
-                }
-            }
-        }
-        if (t1[t2][nm['d']]){
-            //for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
-            for (t3 = t1[t2][nm['d']].length - 1 ; t3 >= 0 ; --t3){
-                stack_1.unshift(t1[t2][nm['d']][t3]);
-            }
-        }
-    }
-}
-console.log('result tree:');
-console.log('============');
-console.log(JSON.stringify(stack, function(p_key, p_val){
-    if (typeof p_val === 'function')
-        return '<function>';
-    if (p_key === '_paths') // p_value must be instance of Array
-        return `<array(${p_val.length})>`;
-    return p_val;
-}, 2));
-//console.log('=========================');
-
-console.log('URLS:');
-console.log('=====');
-stack_1 = stack.slice();
-urls = [];
-while (stack_1.length){
-    t1 = stack_1.shift();
-    ////console.log(t1);
-    for (t2 in t1){
-        if (t2[0] === '_')
-            continue;
-        //console.log('--', t2);//
-        ////console.log(t1[t2]);
-        for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
-            ////console.log(t1[t2]._paths[t3]);
-            let cand = '', cand2 = '', regExpNeeded = false;
-            for (t4 of t1[t2]._paths[t3]){
-                cand += t4.name + '/';
-            }
-            //console.log(cand, '(избыточная форма)');
-
-            t6 = []; // список объектов, которые были упомянуты
-            for (t4 = 0 ; t4 < t1[t2]._paths[t3].length ; ++t4){
-                t5 = t1[t2]._paths[t3][t4];
-                if (t6.indexOf(t5.node) < 0){
-                    cand2 += t5.name + '/';
-                    console.log('-- ', t5.name, ' : ',nm.params,'\n', t5.node);
-                    if (t5.node[t5.name].hasOwnProperty(nm.params)){
-                        for (t7 = 0 ; t7 < t5.node[t5.name][nm.params].length ; ++t7){
-                            cand2 += '[^/]+/';
-                            regExpNeeded = true;
+                            cand = t1[t2]._paths[t6].concat(t4[t5]._paths[0]);
+                            t4[t5]._paths.push(cand);
                         }
                     }
-                    t6.push(t5.node);
-                }
-                else{
-                    //console.log('BORIS: ', t5.name);
+                    else
+                        console.log(`${t5}: not started yet...`);
+                    //console.log('\t\t', t4[t5]._paths);
+                    if (t4[t5][nm['d']]){
+                        //for (t6 = 0 ; t6 < t4[t5][nm['d']].length ; ++t6)
+                        for (t6 = t4[t5][nm['d']].length - 1 ; t6 >= 0  ; --t6){
+                            stack_2.unshift(t4[t5][nm['d']][t6]);
+                        }
+                    }
                 }
             }
-            //console.log(t1[t2].hasOwnProperty(nm['d']), '\t', cand2);
-            urls.push({
-                path: cand2,
-                obj: t1[t2],
-                regExpNeeded: regExpNeeded
-            });
-        }
-        if (t1[t2][nm['d']]){
-            for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
-                stack_1.unshift(t1[t2][nm['d']][t3]);
+            if (t1[t2][nm['d']]){
+                //for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
+                for (t3 = t1[t2][nm['d']].length - 1 ; t3 >= 0 ; --t3){
+                    stack_1.unshift(t1[t2][nm['d']][t3]);
+                }
             }
         }
     }
-}
-console.log('---------');
-var urlsFile = '';
-for (t1 = 0, t2 = urls.length ; t1 < t2 ; ++t1){
-    t3 = urls.shift();
-    //t4 = 'qwe' + t3.path;
-    //if (t3.obj[nm['params']]){
-    if (t3.regExpNeeded){
-        console.log('##############################');
-        console.log(t3.obj);//
-        console.log('t3.path:\n', t3.path);
-        t4 = '\n    re_path(r\'^' + t3.path + '$\', views.index_html),';
+    console.log('result tree:');
+    console.log('============');
+    console.log(JSON.stringify(stack, function(p_key, p_val){
+        if (typeof p_val === 'function')
+            return '<function>';
+        if (p_key === '_paths') // p_value must be instance of Array
+            return `<array(${p_val.length})>`;
+        return p_val;
+    }, 2));
+    //console.log('=========================');
+
+    console.log('URLS:');
+    console.log('=====');
+    stack_1 = stack.slice();
+    urls = [];
+    while (stack_1.length){
+        t1 = stack_1.shift();
+        ////console.log(t1);
+        for (t2 in t1){
+            if (t2[0] === '_')
+                continue;
+            //console.log('--', t2);//
+            ////console.log(t1[t2]);
+            for (t3 = 0 ; t3 < t1[t2]._paths.length ; ++t3){
+                ////console.log(t1[t2]._paths[t3]);
+                let cand = '', cand2 = '', regExpNeeded = false;
+                for (t4 of t1[t2]._paths[t3]){
+                    cand += t4.name + '/';
+                }
+                //console.log(cand, '(избыточная форма)');
+
+                t6 = []; // список объектов, которые были упомянуты
+                for (t4 = 0 ; t4 < t1[t2]._paths[t3].length ; ++t4){
+                    t5 = t1[t2]._paths[t3][t4];
+                    if (t6.indexOf(t5.node) < 0){
+                        cand2 += t5.name + '/';
+                        console.log('-- ', t5.name, ' : ',nm.params,'\n', t5.node);
+                        if (t5.node[t5.name].hasOwnProperty(nm.params)){
+                            for (t7 = 0 ; t7 < t5.node[t5.name][nm.params].length ; ++t7){
+                                cand2 += '[^/]+/';
+                                regExpNeeded = true;
+                            }
+                        }
+                        t6.push(t5.node);
+                    }
+                    else{
+                        //console.log('BORIS: ', t5.name);
+                    }
+                }
+                //console.log(t1[t2].hasOwnProperty(nm['d']), '\t', cand2);
+                urls.push({
+                    path: cand2,
+                    obj: t1[t2],
+                    regExpNeeded: regExpNeeded
+                });
+            }
+            if (t1[t2][nm['d']]){
+                for (t3 = 0 ; t3 < t1[t2][nm['d']].length ; ++t3){
+                    stack_1.unshift(t1[t2][nm['d']][t3]);
+                }
+            }
+        }
     }
-    else
-        t4 = '\n    path(\'' + t3.path + '\', views.index_html),';
-    //re_path(r'', views.index_html),
-    urlsFile += t4;
-    //console.log(t4);//
-    urls.push(t4);
+    console.log('---------');
+    for (t1 = 0, t2 = urls.length ; t1 < t2 ; ++t1){
+        t3 = urls.shift();
+        //t4 = 'qwe' + t3.path;
+        //if (t3.obj[nm['params']]){
+        if (t3.regExpNeeded){
+            console.log('##############################');
+            console.log(t3.obj);//
+            console.log('t3.path:\n', t3.path);
+            t4 = '\n    re_path(r\'^' + t3.path + '$\', views.index_html),';
+        }
+        else
+            t4 = '\n    path(\'' + t3.path + '\', views.index_html),';
+        //re_path(r'', views.index_html),
+        urlsFile += t4;
+        //console.log(t4);//
+        urls.push(t4);
+    }
 }
 console.log(urlsFile);//
 t1 = path.join(targetPath, 'django_project/root_app/urls.py');
