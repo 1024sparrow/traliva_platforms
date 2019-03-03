@@ -13,7 +13,7 @@ mkdir -p "$2"/django_project/{static,templates}/root_app
 sed "s/#RES#/res/g" "$1"/style.css > "$2"/django_project/static/root_app/style.css
 cp -r "$1"/{gameplay.js,res} "$2"/django_project/static/root_app/
 
-mv "$2"/index.html "$2"/django_project/templates/root_app/
+mv "$2"/{index.html,robots.txt} "$2"/django_project/templates/root_app/
 
 pushd $DIR""
 node generate.js "$1" "$2"

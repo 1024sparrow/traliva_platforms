@@ -18,5 +18,6 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [[ code here: urls ]
+    path('robots.txt/', views.robots_txt),
     path('', views.index_html),
 ]
