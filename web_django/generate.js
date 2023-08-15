@@ -40,9 +40,10 @@ var gp = fs.readFileSync(path.join(projectPath, 'gameplay.js'), 'utf8');
 var traliva__o1234 = function(p){gp = p;};
 gp = gp.replace(new RegExp(`${nm.Traliva}.${nm.init}\\(`, 'g'), 'traliva__o1234(');
 
-eval(`'use strict';
+const tmp2=`'use strict';
 var history = {};
-${gp}`);
+${gp}`;
+eval(tmp2);
 // Теперь в gp - объект, передаваемый в $Traliva.$init(..).
 
 //console.log('gp:', gp); // теперь должны обойти дерево gp.tree
