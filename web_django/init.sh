@@ -8,7 +8,7 @@ echo "Текущая директория:       ${PWD}"
 readonly SRC_DIR="$(dirname $0)" # путь, где лежит этот скрипт
 readonly PROJ_DIR=$1 # Эту директорию модифицировать нельзя. Это директория, чтобы оттуда копировать.
 readonly PLATFORM_NAME=$(basename $SRC_DIR)
-readonly TARGET_DIR="$PWD/targets/$PLATFORM_NAME"
+readonly TARGET_DIR=$2 #"$ROOT/$PLATFORM_NAME"
 
 function ERROR {
 	echo "Ошибка сборки под платформу \"$PLATFORM_NAME\": $1"
